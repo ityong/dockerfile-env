@@ -1,0 +1,35 @@
+#模板语法版本注意和docker 的容器内核版本对应所匹配
+version: "3.7"
+
+services:
+
+  redis-master:
+    image: redis:5.0.7
+    container_name: redis-master
+    volumes:
+      - /www/webroot/dockerfile-env/redis/redis-master:/usr/src/redis
+    networks: #网络
+      redis-network:
+        ipv4_address: 192.168.2.10   #设置ip地址
+    working_dir: /usr/src/redis #工作目录
+    ports:
+      - 6380:6379
+
+  redis-slave:
+    image: redis:5.0.7
+    container_name: redis-slave
+    volumes:
+      - /www/webroot/dockerfile-env/redis/redis-slave:/usr/src/redis
+    networks:
+      redis-network:
+        ipv4_address: 192.168.2.11
+    working_dir: /usr/src/redis
+    ports:
+      - 6381:6379
+
+#设置网络环境
+networks:
+  #引用外部预先定义好的网段
+  redis-network:
+    external:
+      name: redis-network
